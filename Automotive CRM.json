@@ -1,0 +1,575 @@
+{
+  "name": "Automotive CRM",
+  "nodes": [
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ JSON.parse($json.candidates[0].content.parts[0].text.replace(/```json/gi, '').replace(/```/g, '').trim()).intent }}",
+                    "rightValue": "sales",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "0bf9170e-e81b-4851-9e53-40d4cb93eec9"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "3fdfadf8-f6a4-49f9-90b7-e8bea436e162",
+                    "leftValue": "={{ JSON.parse($json.candidates[0].content.parts[0].text.replace(/```json/gi, '').replace(/```/g, '').trim()).intent }}",
+                    "rightValue": "finance",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "c029207f-90a4-4f1f-949d-e3effa60421d",
+                    "leftValue": "={{ JSON.parse($json.candidates[0].content.parts[0].text.replace(/```json/gi, '').replace(/```/g, '').trim()).intent }}",
+                    "rightValue": "service",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "6443517c-83a3-48d5-a37f-0dc20e7203cc",
+                    "leftValue": "={{ JSON.parse($json.candidates[0].content.parts[0].text.replace(/```json/gi, '').replace(/```/g, '').trim()).intent }}",
+                    "rightValue": "inventory",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "d3e78faa-b46e-4fca-93a1-3bc0c53f8a4b",
+                    "leftValue": "={{ JSON.parse($json.candidates[0].content.parts[0].text.replace(/```json/gi, '').replace(/```/g, '').trim()).intent }}",
+                    "rightValue": "retention",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        240,
+        -224
+      ],
+      "id": "71334041-bb03-4ad5-9c1d-49440af58aea",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=SYSTEM:\nYou are the Front Desk Router for an Automotive CRM. Read the customer's text, classify their intent, and extract any relevant details into a strict JSON object. \n\nIntents: \"sales\", \"finance\", \"service\", \"inventory\", \"retention\".\n\nHard Rules:\n1. Output ONLY valid JSON.\n2. Do not include markdown formatting (```json).\n3. If a detail is missing from the customer's text, output null for that field.\n\nOUTPUT JSON SCHEMA:\n{\n  \"intent\": \"string\",\n  \"customer_name\": \"string | null\",\n  \"vehicle_mentioned\": \"string | null\",\n  \"budget_or_price\": \"number | null\",\n  \"dates_mentioned\": \"string | null\",\n  \"customer_issue_or_query\": \"string | null\"\n}"
+            },
+            {
+              "content": "={{ $json.chatInput }}"
+            }
+          ]
+        },
+        "simplify": false,
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        -112,
+        -176
+      ],
+      "id": "ff6c6c8b-d67b-4953-a188-b54a1b2b7743",
+      "name": "Supervisor Agent",
+      "retryOnFail": true,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "wsmAZkkLng8FLZCD",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "responseMode": "responseNodes"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -336,
+        -176
+      ],
+      "id": "95073463-f77a-46a6-9fad-c14bdf568887",
+      "name": "When chat message received",
+      "webhookId": "441ec0bd-fd64-478d-96d2-ee5572efd396",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "message": "={{ $json.content.parts[0].text }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chat",
+      "typeVersion": 1.2,
+      "position": [
+        816,
+        -560
+      ],
+      "id": "4afd9157-0414-4650-8122-adb0bd1c032c",
+      "name": "Chat",
+      "webhookId": "979f801d-28b5-4c3a-a26b-31656429183c"
+    },
+    {
+      "parameters": {
+        "message": "={{ $json.content.parts[0].text.replace(/```json/gi, '').replace(/```/g, '').trim() }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chat",
+      "typeVersion": 1.2,
+      "position": [
+        816,
+        -368
+      ],
+      "id": "d52e213c-a6ed-4ee1-97e2-70bf13a72512",
+      "name": "Chat1",
+      "webhookId": "f74ffa0d-3032-4459-b41d-9f73c03f9f3c",
+      "alwaysOutputData": true
+    },
+    {
+      "parameters": {
+        "message": "={{ $json.content.parts[0].text.replace(/```json/gi, '').replace(/```/g, '').trim().whatsapp_message }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chat",
+      "typeVersion": 1.2,
+      "position": [
+        816,
+        -176
+      ],
+      "id": "1771f093-06a0-4813-bfc7-17b5d22596ea",
+      "name": "Chat2",
+      "webhookId": "db83c366-f2bf-4cda-829e-b13b2112ad7f"
+    },
+    {
+      "parameters": {
+        "message": "={{ $json.content.parts[0].text.replace(/```json/gi, '').replace(/```/g, '').trim().whatsapp_message }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chat",
+      "typeVersion": 1.2,
+      "position": [
+        816,
+        16
+      ],
+      "id": "eefce267-2c07-4e7c-a71e-791540dea231",
+      "name": "Chat3",
+      "webhookId": "c99cc483-5b43-45dc-a77f-7713eb927307"
+    },
+    {
+      "parameters": {
+        "message": "={{ $json.content.parts[0].text.replace(/```json/gi, '').replace(/```/g, '').trim() }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chat",
+      "typeVersion": 1.2,
+      "position": [
+        816,
+        208
+      ],
+      "id": "9412ae3a-6129-44aa-969c-437f1221b9b3",
+      "name": "Chat4",
+      "webhookId": "d21caeab-e466-4654-ab88-4bc4523e31b9"
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=Role: You are SLS-01, an automotive sales conversion AI. Analyze an inbound lead's profile, source, and vehicle interest, then generate a personalized test drive invitation within 5 minutes of the enquiry.\nOperational Rules: Tailor the pitch to the specific motivation mentioned. Do not use generic templates.\nRequired Output Format: Return ONLY a direct, conversational WhatsApp message addressing their specific concern. Do not include markdown formatting or extra text.\nHard Rule: Output ONLY the raw conversational text of the message. Do not use JSON, do not use code blocks, and do not include any extra commentary.\n\nHere is the inbound lead data:\nLead Name: {{$json.body.lead_name}}\nVehicle Interest: {{$json.body.vehicle_interest}}\nCustomer Concern: {{$json.body.concern}}\nSource: {{$json.body.enquiry_source}}"
+            },
+            {
+              "content": "={{ $json.candidates[0].content.parts[0].text }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        464,
+        -560
+      ],
+      "id": "d3136489-210d-4d35-aff6-6ee9ae76c469",
+      "name": "Sales Agent",
+      "retryOnFail": true,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "wsmAZkkLng8FLZCD",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "SYSTEM:\nYou are FIN-02, an Automotive Finance & Insurance (F&I) AI. You dynamically structure EMI (Equated Monthly Installment) breakdowns to alleviate customer financial anxiety.\n\nHard Rules:\n1. Emphasize affordability. Maintain a reassuring, highly professional tone.\n2. Mathematically calculate the estimated EMI based on the (Vehicle Price - Down Payment) over a 5-year (60 months) term at an 8.5% interest rate. (Use standard EMI formula).\n3. Explicitly label the output as an \"Estimate subject to bank approval.\"\n\n\nHard Rule: Output ONLY the raw conversational text of the message. Do not use JSON, do not use code blocks, and do not include any extra commentary.\n\n  \"whatsapp_message\": \"string (The formatted EMI pitch to the customer)\",\n  \"calculated_loan_amount\": \"number\",\n  \"estimated_monthly_emi\": \"number\",\n  \"finance_status\": \"QUOTE_DELIVERED\"\n"
+            },
+            {
+              "content": "={{ $json.candidates[0].content.parts[0].text }}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        464,
+        -368
+      ],
+      "id": "74bb42e6-877d-4dde-ae7c-a93e69fc36e7",
+      "name": "Finance Agent",
+      "retryOnFail": true,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "wsmAZkkLng8FLZCD",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=SYSTEM:\nYou are SRV-03, a Predictive Service AI for an automotive dealership workshop. Your objective is to contact customers whose vehicles are statistically due for preventative maintenance and secure a service booking.\n\nHard Rules:\n1. Be helpful and urgent, but do NOT alarm the customer. Never imply their car is broken or unsafe.\n2. Explicitly mention their specific vehicle model to build trust and prove we know their service history.\n3. Include a placeholder for the booking link: [INSERT_BOOKING_LINK].\n4. Output strictly in valid JSON. Do not include markdown code blocks.\n\nUSER:\nService Data:\n{\n  \"customer_name\": \"{{$json.body.customer_name}}\",\n  \"vehicle_model\": \"{{$json.body.vehicle_model}}\",\n  \"months_since_delivery\": {{$json.body.months_elapsed}},\n  \"last_service_date\": \"{{$json.body.last_service}}\"\n}\n\nOUTPUT JSON SCHEMA:\n{\n  \"whatsapp_message\": \"string (The formatted service reminder)\",\n  \"service_priority\": \"STANDARD | URGENT\",\n  \"requires_booking_link\": true\n}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        464,
+        -176
+      ],
+      "id": "0738a69a-8600-4015-b2d3-6e8f5af6c657",
+      "name": "Service Agent",
+      "retryOnFail": true,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "wsmAZkkLng8FLZCD",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=SYSTEM:\nYou are INV-04, an Inventory Liquidation AI. Your job is to move aged vehicle inventory (60+ days on the lot) by drafting highly targeted, high-urgency offers to \"cold\" leads who previously inquired but did not buy.\n\nHard Rules:\n1. Create a sense of exclusivity (e.g., \"Dealership Management unlocked a special clearance on the exact model you looked at\").\n2. Reference their past objection to show personalization (e.g., if they wanted a lower EMI, tell them the pricing structure just improved).\n3. Push for an immediate phone call or showroom visit.\n4. Output strictly in valid JSON. Do not include markdown code blocks.\n\nUSER:\nLiquidation Target:\n{\n  \"lead_name\": \"{{$json.body.lead_name}}\",\n  \"aged_vehicle_model\": \"{{$json.body.aged_vehicle_model}}\",\n  \"past_objection_logged\": \"{{$json.body.past_objection_logged}}\",\n  \"days_in_inventory\": {{$json.body.days_in_inventory}}\n}\n\nOUTPUT JSON SCHEMA:\n{\n  \"whatsapp_message\": \"string (The highly targeted clearance pitch)\",\n  \"urgency_tactic_used\": \"string\",\n  \"target_action\": \"PHONE_CALL | SHOWROOM_VISIT\"\n}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        464,
+        16
+      ],
+      "id": "79275e8b-547e-4a87-8c75-6271070077c3",
+      "name": "Inventory Agent",
+      "retryOnFail": true,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "wsmAZkkLng8FLZCD",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "messages": {
+          "values": [
+            {
+              "content": "=SYSTEM:\nYou are RET-05, a Post-Sale Customer Experience AI. You contact customers exactly 48 hours after they take delivery of their new vehicle to protect the dealership's Customer Satisfaction Index (CSI).\n\nHard Rules:\n1. Express extreme gratitude for their business.\n2. Ask ONE simple, frictionless question to gauge their initial driving experience.\n3. If the user's input (if provided) contains negative sentiment or complaints, flag it for immediate human escalation.\n4. Output strictly in valid JSON. Do not include markdown code blocks.\n\n\n\nOUTPUT JSON SCHEMA:\n{\n  \"whatsapp_message\": \"string (Initial check-in OR response to their reply)\",\n  \"customer_sentiment\": \"POSITIVE | NEUTRAL | NEGATIVE | NO_REPLY_YET\",\n  \"escalate_to_human_manager\": \"boolean\"\n}"
+            }
+          ]
+        },
+        "builtInTools": {},
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        464,
+        208
+      ],
+      "id": "2599a630-0687-4f70-9a6b-c234d8d2828c",
+      "name": "Retention Agent",
+      "retryOnFail": true,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "wsmAZkkLng8FLZCD",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Sales Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Finance Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Service Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Inventory Agent",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Retention Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Supervisor Agent": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Supervisor Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Sales Agent": {
+      "main": [
+        [
+          {
+            "node": "Chat",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Finance Agent": {
+      "main": [
+        [
+          {
+            "node": "Chat1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Service Agent": {
+      "main": [
+        [
+          {
+            "node": "Chat2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Inventory Agent": {
+      "main": [
+        [
+          {
+            "node": "Chat3",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retention Agent": {
+      "main": [
+        [
+          {
+            "node": "Chat4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "9e252095-dfe6-4f72-9d26-5b9bdccd160e",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "3c9358c912119dc65bd92ac6af21c5f50eaf1e3245a6c116e37f80ea2160e674"
+  },
+  "id": "oF3TJfOtfjFkR2RN",
+  "tags": []
+}
